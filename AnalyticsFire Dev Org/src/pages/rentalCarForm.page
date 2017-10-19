@@ -1,0 +1,147 @@
+<!------------------------------------------------------------------------------------
+Page Name     :  rentalCarForm.page
+Purpose       :  Serve as a public access point to rent cars using Car__c data
+History:                                                            
+--------                                                           	
+VERSION  AUTHOR     	    DATE            DETAIL                      	TICKET REFERENCE/ NO.
+1.       Evangelos Staikos  2017-10-06      Original Version            	N/A
+
+-------------------------------------------------------------------------------------->
+<apex:page docType="html-5.0" controller="rentalCarFormController" sidebar="false" showHeader="false" action="{!adminFlow}">
+	<html>
+<head>
+<style>
+	body {
+		width:800px;
+	}
+	
+	.col {
+		width:400px; 
+		float:left; 
+		display:block;
+	}
+	
+	label, input {
+		display:inline-block;
+		float:left;
+		}
+</style>
+</head>
+<body>
+
+<apex:outputPanel rendered="{!inAdminFlow == false}">
+
+	<apex:outputPanel rendered="{!success == false}">
+	
+	<div>
+		<h2><apex:outputText value="{!errorMessage}" escape="false"/></h2>
+	
+		<apex:form id="rentalForm">
+		
+			<div class="col">
+				<label>First Name</label>
+				<apex:inputText value="{!firstName}" id="firstName"></apex:inputText>
+			</div>
+		
+			<div class="col">
+				<label>Last Name</label>
+				<apex:inputText value="{!lastName}" id="lastName"></apex:inputText>
+			</div>
+			<br/>
+			<div class="col">
+				<label>Phone Number</label>
+				<apex:inputText value="{!phoneNumber}" id="phoneNumber"></apex:inputText>
+			</div>
+			
+			<div class="col">
+				<label>Email Address</label>
+				<apex:inputText value="{!emailAddress}" id="emailAddress"></apex:inputText>
+			</div>
+			<br/>
+			<div class="col">
+				<label>Billing Street</label>
+				<apex:inputText value="{!billingStreet}" id="billingStreet"></apex:inputText>
+			</div>
+			
+			<div class="col">
+				<label>Billing City</label>
+				<apex:inputText value="{!billingCity}" id="billingCity"></apex:inputText>
+			</div>
+			<br/>
+			<div class="col">
+				<label>Billing State</label>
+				<apex:selectList value="{!billingState}" size="1" id="billingState">                                          
+    	        	<apex:selectOptions value="{!billingStateValues}" />                                          
+            	</apex:selectList>
+			</div>
+		
+			<div class="col">
+				<label>Billing Postal</label>
+				<apex:inputText value="{!billingPostal}" id="billingPostal"></apex:inputText>
+			</div>
+			
+			<br/>
+			<br/>
+			<br/>
+	
+			<div >
+				<h4>Rental Start Date</h4>
+				<apex:inputField value="{!app.Start_Date__c}">
+					<apex:actionSupport event="onchange" action="{!formDateChanged}" rerender="rentalForm"/>
+				</apex:inputField>  
+			</div>
+			<br/>
+			<br/>
+			<div >
+				<h4>Rental End Date</h4>
+				<apex:inputField value="{!app.End_Date__c}">
+					<apex:actionSupport event="onchange" action="{!formDateChanged}" rerender="rentalForm"/>
+				</apex:inputField>  
+			</div>
+			
+			<br/>
+
+			<div>
+				<div>
+					<label>Car</label>
+					<apex:selectList value="{!selectedCar}" size="1" id="car" disabled="{!disableForm}">
+						<apex:actionSupport event="onchange" action="{!formCarChanged}" rerender="rentalForm"/>                                          
+	    	        	<apex:selectOptions value="{!cars}" />                                          
+    	        	</apex:selectList>
+            	</div>
+            	<apex:outputPanel rendered="{!currentCar.Name != '---'}">
+	            	<div>
+	            		<apex:image id="carImage" value="/{!currentCar.ImageUrl__c}" width="200"/><br/>
+	            		<apex:outputField value="{!currentCar.Description__c}" /><br/>
+	            		<h4>Price per day: $<apex:outputText value="{!currentCar.Price_per_day__c}" /></h4>
+	            	</div>
+	            	<div>
+	            		<h4>Total Rental: $<apex:outputText value="{!totalPrice}" /></h4>
+	            	</div>
+            	</apex:outputPanel>
+			</div>
+			
+		<apex:commandButton action="{!submit}" value="Submit" disabled="{!disableForm}"/>
+		
+		</apex:form>
+		</div>
+	</apex:outputPanel>
+	
+	
+	<apex:outputPanel rendered="{!success == true}">
+		<h4>Thank you for your application!</h4>
+		<br/>
+		Your application ID is <apex:outputText value="{!app.id}" />
+		<br/>
+		Car Name: <apex:outputText value="{!currentCar.Name}" /><br/>
+		Rental Date: <apex:outputText value="{!app.Start_date__c}" /> - <apex:outputText value="{!app.End_Date__c}" /><br/>
+		Total: $<apex:outputText value="{!app.Amount__c}" />
+	</apex:outputPanel>
+</apex:outputPanel>
+
+<apex:outputPanel rendered="{!success == true}">
+<apex:outputText value="{!errorMessage}" />
+</apex:outputPanel>
+	</body>
+	</html>
+</apex:page>
